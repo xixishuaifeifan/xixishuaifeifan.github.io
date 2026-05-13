@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>科技节趣味测试 - XIXISHUAIFEIFAN</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { background: #000510; color: #fff; font-family: 'Consolas','Microsoft Yahei',sans-serif; }
+        .quiz-card { max-width: 580px; margin: 40px auto 0; background: #101521bb; padding: 38px 28px; border-radius: 16px; box-shadow: 0 0 30px #14e0f23a; }
+        h2 { color: #38bdf8; letter-spacing: 2px; margin-bottom: 16px;}
+        .question { margin: 22px 0 10px; font-size: 19px; color: #fff;}
+        .options label { display: block; padding: 7px 0 7px 12px; margin: 3px 0; border-radius: 10px; cursor: pointer; transition: background 0.2s;}
+        .options input { margin-right: 8px; }
+        .options label:hover, .options input:checked+span { background: #0ea5e950; }
+        .btn { display: inline-block; margin: 26px 0 6px; padding: 13px 34px; border: none; background: #0ea5e9; color: #fff; border-radius: 22px; font-size: 18px; cursor: pointer; box-shadow: 0 0 13px #0ea5e980; transition: background 0.3s;}
+        .btn:hover { background: #38bdf8; }
+        #score { font-size: 25px; color: #22d3ee; font-weight: bold; margin-top: 25px;}
+        #restart-btn {margin-top:10px;color:#0ea5e9;background:transparent;}
+    </style>
+</head>
+<body>
+<div class="quiz-card">
+    <h2>科技节趣味测试</h2>
+    <form id="quizForm">
+        <!-- 题目将由JavaScript生成 -->
+    </form>
+    <div id="score"></div>
+    <button class="btn" id="restart-btn" style="display:none;" onclick="restartQuiz()">再测一次</button>
+</div>
+<script>
+const quizQuestions = [
+    {
+        question: "1. 下列哪项技术不属于人工智能（AI）的典型应用？",
+        options: ["语音识别", "人脸解锁", "无线路由器联网", "自动驾驶"],
+        answer: 2 // 选项数组从0开始：0,1,2,3
+    },
+    {
+        question: "2. 世界上第一台电子��算机ENIAC占用了多大空间？",
+        options: ["餐桌大小", "一个教室", "一整个房间", "一只手掌"],
+        answer: 2
+    },
+    {
+        question: "3. 常见的智能硬件“树莓派”最主要被当作什么用途？",
+        options: ["家庭路由器", "迷你单板电脑", "游戏手柄", "高速摄像头"],
+        answer: 1
+    },
+    {
+        question: "4. 下面哪个是目前公认的宇宙中速度最快的东西？",
+        options: ["电流", "声音", "光", "风"],
+        answer: 2
+    },
+    {
+        question: "5. 3D打印机最常用的材料下列哪种？",
+        options: ["橡皮泥", "塑料", "金属", "纸张"],
+        answer: 1
+    },
+    {
+        question: "6. 手机拍照后可用哪项技术提升画质并减少噪点？",
+        options: ["蓝牙", "云同步", "AI算法增强", "二维码"],
+        answer: 2
+    },
+    {
+        question: "7. 如果你听到“元宇宙”这个词，它最多跟哪类技术相关？",
+        options: ["虚拟现实/增强现实", "传统电视", "实体商店", "纯音频广播"],
+        answer: 0
+    },
+    {
+        question: "8. 下列哪个单词与计算机病毒无关？",
+        options: ["木马", "蠕虫", "防火墙", "勒索软件"],
+        answer: 2
+    },
+    {
+        question: "9. 下列哪一个属于开源操作系统？",
+        options: ["Windows", "iOS", "Linux", "macOS"],
+        answer: 2
+    },
+    {
+        question: "10. 若想体验无线充电，下列哪项设备最常见？",
+        options: ["机械键盘", "智能手表", "扫描仪", "数码相框"],
+        answer: 1
+    }
+];
+
+function createQuiz() {
+    let quizContainer = document.getElementById('quizForm');
+    quizContainer.innerHTML = '';
+    quizQuestions.forEach((q, idx) => {
+        // 构建每道题目和选项
+        let html = `<div class="question">${q.question}</div>
+                    <div class="options">`;
+        q.options.forEach((opt, i) => {
+            html += `
+            <label>
+                <input type="radio" name="q${idx}" value="${i}">
+                <span>${opt}</span>
+            </label>`;
+        });
+        html += '</div>';
+        quizContainer.innerHTML += html;
+    });
+    quizContainer.innerHTML += `<button type="submit" class="btn">提交答案</button>`;
+}
+createQuiz();
+
+document.getElementById('quizForm').onsubmit = function(e){
+    e.preventDefault();
+    let total = 0;
+    let unanswered = 0;
+    quizQuestions.forEach((q, idx) => {
+        let radios = document.getElementsByName('q' + idx);
+        let selected = -1;
+        for(let i=0; i<radios.length; i++) {
+            if(radios[i].checked) selected = i;
+        }
+        if(selected === -1) unanswered++;
+        else if(selected === q.answer) total += 10;
+    });
+    if(unanswered > 0){
+        document.getElementById('score').innerHTML = `<span style="color:#f39c12;">还有${unanswered}题未作答，请全部作答后再提交！</span>`;
+        return;
+    }
+    document.getElementById('score').innerHTML = `你的得分：<span style="color:#38bdf8">${total}</span> / 100`;
+    document.querySelectorAll('.btn[type=submit]')[0].style.display="none";
+    document.getElementById('restart-btn').style.display = '';
+};
+
+function restartQuiz(){
+    createQuiz();
+    document.getElementById('score').innerHTML = '';
+    document.getElementById('restart-btn').style.display = 'none';
+}
+</script>
+</body>
+</html>
