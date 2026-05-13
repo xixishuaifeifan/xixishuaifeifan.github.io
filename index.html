@@ -5,21 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>xixishuaifeifan | 赛博主页</title>
     <style>
-        *{margin:0;padding:0;box-sizing:border-box;}
-        body{
-            background: #000510;
+        * {margin:0; padding:0; box-sizing:border-box;}
+        body {
+            background: #0a1022;
             color: #fff;
             font-family: 'Consolas', 'Microsoft Yahei', sans-serif;
             overflow-x: hidden;
+            min-height: 100vh;
         }
-        /* 星空背景 */
-        #stars{
+        /* 霓虹星云背景canvas */
+        #bg-canvas {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top:0; left:0; right:0; bottom:0;
+            width: 100vw; height: 100vh;
             z-index: 0;
+            display:block;
         }
         /* 主容器 */
         .container{
@@ -35,60 +35,75 @@
             padding: 50px 30px;
             border: 1px solid #0ea5e950;
             border-radius: 20px;
-            background: linear-gradient(135deg, #0b101ecc, #000510cc);
-            box-shadow: 0 0 50px #0099ff33;
-            backdrop-filter: blur(8px);
+            background: linear-gradient(135deg, #0b101ecc, #031243cc 80%);
+            box-shadow: 0 0 50px #11FCF950, 0 0 110px #0ea5e930;
+            backdrop-filter: blur(10px);
         }
         h1{
             font-size: 42px;
             color: #38bdf8;
             letter-spacing: 5px;
-            text-shadow: 0 0 10px #38bdf8, 0 0 30px #0ea5e9;
+            text-shadow: 0 0 14px #38bdf8, 0 0 44px #0ea5e9;
             margin-bottom: 20px;
+            font-family: 'Consolas','Microsoft Yahei', monospace;
         }
         .neon-line{
             width: 100px;
             height: 2px;
-            background: linear-gradient(90deg, transparent, #22d3ee, transparent);
+            background: linear-gradient(90deg, transparent, #22d3ee, #a5b4fc, transparent);
             margin: 25px auto;
-            box-shadow: 0 0 10px #22d3ee;
+            box-shadow: 0 0 14px #22d3ee, 0 0 20px #818cf8;
+            border-radius: 2px;
         }
         p{
             font-size: 18px;
-            color: #94a3b8;
+            color: #aee0fc;
             line-height: 1.8;
             margin: 10px 0;
+            text-shadow: 0 0 10px #0ea5e920;
         }
         .tags{
             margin-top: 30px;
         }
-        .tag{
+        .tag {
             display: inline-block;
             margin: 8px 6px;
-            padding: 8px 18px;
-            border: 1px solid #22d3ee;
+            padding: 10px 28px;
+            border: 1.5px solid #39fdfd;
             border-radius: 25px;
             color: #22d3ee;
-            font-size: 14px;
-            background: #0ea5e910;
-            box-shadow: 0 0 10px #0ea5e940;
+            font-size: 16px;
+            font-weight: bold;
+            background: linear-gradient(90deg,#0ea5e94d,#818cf84d, #0ea5e94d);
+            box-shadow: 0 0 14px #0ea5e980,0 0 25px #60e6ff30;
+            text-decoration: none;
             transition: all 0.3s;
+            position: relative;
         }
-        .tag:hover{
-            background: #0ea5e930;
-            box-shadow: 0 0 20px #0ea5e980;
-            transform: translateY(-3px);
+        .tag:hover {
+            background: linear-gradient(90deg, #64e3ff, #65a7ff 90%);
+            color: #161e33;
+            box-shadow: 0 0 30px #0ea5e9cc, 0 0 44px #38bdf899;
+            transform: translateY(-4px) scale(1.04) rotate(-1deg);
+            letter-spacing: 3px;
+            text-decoration: none;
         }
         .footer{
             margin-top: 50px;
             font-size: 13px;
-            color: #475569;
+            color: #54b7ff93;
+            text-shadow: 0 0 6px #2563eb55;
+        }
+        @media (max-width:600px) {
+            .container {padding-top:50px;}
+            .card {padding:24px 6px;}
+            h1 {font-size:28px;}
         }
     </style>
 </head>
 <body>
-    <!-- 动态星空背景 -->
-    <canvas id="stars"></canvas>
+    <!-- 高级炫酷星空背景 -->
+    <canvas id="bg-canvas"></canvas>
 
     <div class="container">
         <div class="card">
@@ -96,63 +111,20 @@
             <div class="neon-line"></div>
             <p>电子信息工程（5）班 · 科技探索者</p>
             <p>电路 | AI | 编程 | 创意实践</p>
-
             <div class="tags">
-                <span class="tag">趣味测试</span>
+                <a class="tag" href="quiz.html">趣味测试</a>
             </div>
         </div>
 
         <div class="footer">
-            © 2026 GitHub Pages | Powered by Code & Starlight
+            © 2026 GitHub Pages | Powered by Code &amp; Starlight
         </div>
     </div>
-
-    <!-- 星空动画JS -->
+    <!-- 星空&霓虹流体&流星动画JS -->
     <script>
-        const canvas = document.getElementById('stars');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        const stars = [];
-        const starCount = 250;
-
-        for (let i = 0; i < starCount; i++) {
-            stars.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                radius: Math.random() * 1.5 + 0.5,
-                speed: Math.random() * 0.5 + 0.1,
-                opacity: Math.random()
-            });
-        }
-
-        function drawStars() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            stars.forEach(star => {
-                ctx.beginPath();
-                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
-                ctx.fill();
-
-                star.opacity += Math.random() * 0.02 - 0.01;
-                if (star.opacity < 0.1) star.opacity = 0.1;
-                if (star.opacity > 1) star.opacity = 1;
-
-                star.y += star.speed;
-                if (star.y > canvas.height) {
-                    star.y = 0;
-                    star.x = Math.random() * canvas.width;
-                }
-            });
-            requestAnimationFrame(drawStars);
-        }
-
-        drawStars();
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
-    </script>
-</body>
-</html>
+    // 炫酷星空霓虹流体+流星
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let w = window.innerWidth, h = window.innerHeight;
+    canvas.width = w; canvas.height =*
+
