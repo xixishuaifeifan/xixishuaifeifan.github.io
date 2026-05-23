@@ -1,134 +1,236 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <title>科技节趣味测试 - XIXISHUAIFEIFAN</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body { background: #000510; color: #fff; font-family: 'Consolas','Microsoft Yahei',sans-serif; }
-        .quiz-card { max-width: 580px; margin: 40px auto 0; background: #101521bb; padding: 38px 28px; border-radius: 16px; box-shadow: 0 0 30px #14e0f23a; }
-        h2 { color: #38bdf8; letter-spacing: 2px; margin-bottom: 16px;}
-        .question { margin: 22px 0 10px; font-size: 19px; color: #fff;}
-        .options label { display: block; padding: 7px 0 7px 12px; margin: 3px 0; border-radius: 10px; cursor: pointer; transition: background 0.2s;}
-        .options input { margin-right: 8px; }
-        .options label:hover, .options input:checked+span { background: #0ea5e950; }
-        .btn { display: inline-block; margin: 26px 0 6px; padding: 13px 34px; border: none; background: #0ea5e9; color: #fff; border-radius: 22px; font-size: 18px; cursor: pointer; box-shadow: 0 0 13px #0ea5e980; transition: background 0.3s;}
-        .btn:hover { background: #38bdf8; }
-        #score { font-size: 25px; color: #22d3ee; font-weight: bold; margin-top: 25px;}
-        #restart-btn {margin-top:10px;color:#0ea5e9;background:transparent;}
-    </style>
+  <meta charset="UTF-8">
+  <title>趣味测试 | xixishuaifeifan</title>
+  <style>
+    body { background: #101946; color: #fafcff; font-family: 'Microsoft Yahei', sans-serif; margin: 0; padding: 0; }
+    .quiz-container { max-width: 680px; background: rgba(10,25,50,0.84); margin: 60px auto 0; border-radius: 18px; box-shadow: 0 2px 36px #0ea5e920; padding: 36px 20px;}
+    h2 { color: #38bdf8;}
+    .question { margin: 30px 0 14px; font-size: 20px;}
+    .options label { display:block; padding:8px 0; cursor:pointer;}
+    .submit-btn, .next-btn { margin-top:18px; background:#38bdf8; border:none; color:#101946; padding:9px 20px; border-radius:24px; font-size:18px; cursor:pointer;}
+    .score { margin:23px 0 0; font-size:22px; color: #7fe4e4;}
+    .result-detail { color: #fffe9a; margin-top:8px; line-height:1.7;}
+    @media (max-width: 700px) {
+      .quiz-container {padding:14px 4vw;}
+      .question {font-size: 18px;}
+      .score {font-size:18px;}
+    }
+  </style>
 </head>
 <body>
-<div class="quiz-card">
-    <h2>科技节趣味测试</h2>
-    <form id="quizForm">
-        <!-- 题目将由JavaScript生成 -->
-    </form>
-    <div id="score"></div>
-    <button class="btn" id="restart-btn" style="display:none;" onclick="restartQuiz()">再测一次</button>
+<div class="quiz-container">
+  <h2>趣味测试</h2>
+  <div id="quiz"></div>
+  <button id="submit-btn" class="submit-btn">提交</button>
+  <button id="next-btn" class="next-btn" style="display:none;">下一题</button>
+  <div class="score" id="score-area"></div>
+  <div class="result-detail" id="result-detail"></div>
 </div>
+
 <script>
-const quizQuestions = [
-    {
-        question: "1. 下列哪项技术不属于人工智能（AI）的典型应用？",
-        options: ["语音识别", "人脸解锁", "无线路由器联网", "自动驾驶"],
-        answer: 2 // 选项数组从0开始：0,1,2,3
-    },
-    {
-        question: "2. 世界上第一台电子计算机ENIAC占用了多大空间？",
-        options: ["餐桌大小", "一个教室", "一整个房间", "一只手掌"],
-        answer: 2
-    },
-    {
-        question: "3. 常见的智能硬件“树莓派”最主要被当作什么用途？",
-        options: ["家庭路由器", "迷你单板电脑", "游戏手柄", "高速摄像头"],
-        answer: 1
-    },
-    {
-        question: "4. 下面哪个是目前公认的宇宙中速度最快的东西？",
-        options: ["电流", "声音", "光", "风"],
-        answer: 2
-    },
-    {
-        question: "5. 3D打印机最常用的材料下列哪种？",
-        options: ["橡皮泥", "塑料", "金属", "纸张"],
-        answer: 1
-    },
-    {
-        question: "6. 手机拍照后可用哪项技术提升画质并减少噪点？",
-        options: ["蓝牙", "云同步", "AI算法增强", "二维码"],
-        answer: 2
-    },
-    {
-        question: "7. 如果你听到“元宇宙”这个词，它最多跟哪类技术相关？",
-        options: ["虚拟现实/增强现实", "传统电视", "实体商店", "纯音频广播"],
-        answer: 0
-    },
-    {
-        question: "8. 下列哪个单词与计算机病毒无关？",
-        options: ["木马", "蠕虫", "防火墙", "勒索软件"],
-        answer: 2
-    },
-    {
-        question: "9. 下列哪一个属于开源操作系统？",
-        options: ["Windows", "iOS", "Linux", "macOS"],
-        answer: 2
-    },
-    {
-        question: "10. 若想体验无线充电，下列哪项设备最常见？",
-        options: ["机械键盘", "智能手表", "扫描仪", "数码相框"],
-        answer: 1
-    }
+// 题库（包含explanation解析）
+const quizData = [
+  {
+    question: "1. 电流的单位是什么？",
+    options: ["伏特", "安培", "欧姆", "焦耳"],
+    answer: 1,
+    score: 5,
+    explanation: "电流的标准单位是安培（A），伏特是电压单位，欧姆为电阻单位，焦耳为能量单位。"
+  },
+  {
+    question: "2. 下面哪一个是AI的分支？",
+    options: ["深度学习", "摩斯密码", "光刻", "溴化作用"],
+    answer: 0,
+    score: 5,
+    explanation: "深度学习是人工智能的重要分支，主要研究多层神经网络。"
+  },
+  {
+    question: "3. 编程语言 Python 的标志是？",
+    options: ["蛇", "鸟", "熊猫", "狮子"],
+    answer: 0,
+    score: 5,
+    explanation: "Python 的标志就是两条蛇，象征其名称含义。"
+  },
+  {
+    question: "4. 以下哪个不属于基本逻辑门？",
+    options: ["与门", "或门", "非门", "变门"],
+    answer: 3,
+    score: 5,
+    explanation: "变门不是一种标准逻辑门。常见的逻辑门有与(AND)、或(OR)、非(NOT)。"
+  },
+  {
+    question: "5. 单片机主要用来做什么？",
+    options: ["写小说", "做菜", "控制设备", "视频剪辑"],
+    answer: 2,
+    score: 5,
+    explanation: "单片机常被用作嵌入式控制器，用于控制电子设备。"
+  },
+  {
+    question: "6. 二进制 1011 十进制等于多少？",
+    options: ["11", "10", "9", "7"],
+    answer: 0,
+    score: 5,
+    explanation: "1011 = 1×8 + 0×4 + 1×2 + 1×1 = 8+0+2+1=11。"
+  },
+  {
+    question: "7. JavaScript 运行于？",
+    options: ["数据库", "浏览器", "内存条", "电源"],
+    answer: 1,
+    score: 5,
+    explanation: "JavaScript 最常用于浏览器上实现前端交互。"
+  },
+  {
+    question: "8. 欧姆定律与哪三者有关？",
+    options: ["电压、电流、电阻", "功率、电阻、温度", "电流、磁场、热量", "时间、频率、电容"],
+    answer: 0,
+    score: 5,
+    explanation: "欧姆定律表达电压=电流×电阻。"
+  },
+  {
+    question: "9. 下面哪个是 AI 常用的数据结构？",
+    options: ["链表", "常数", "光线", "图片压缩"],
+    answer: 0,
+    score: 5,
+    explanation: "链表、树等数据结构常见于AI和计算机科学中。"
+  },
+  {
+    question: "10. C 语言中“printf”主要用于？",
+    options: ["输入", "输出", "赋值", "除法"],
+    answer: 1,
+    score: 5,
+    explanation: "printf 在 C 语言中用于格式化输出内容到屏幕。"
+  },
+  {
+    question: "11. 电子信息最基础的存储单元叫？",
+    options: ["字节", "字", "比特", "块"],
+    answer: 2,
+    score: 5,
+    explanation: "比特(bit)为最小的存储单位。一个字节(byte)由8个比特组成。"
+  },
+  {
+    question: "12. LED全称是什么？",
+    options: ["Light Emitting Diode", "Laser Emitter Display", "Linear Electric Device", "Long Endurance Disk"],
+    answer: 0,
+    score: 5,
+    explanation: "LED: Light Emitting Diode，意为发光二极管。"
+  },
+  {
+    question: "13. github主要用于？",
+    options: ["代码托管", "电子支付", "炒股", "写论文"],
+    answer: 0,
+    score: 5,
+    explanation: "GitHub用于代码托管和协作开发。"
+  },
+  {
+    question: "14. 目前主流AI对话模型哪一个？",
+    options: ["GPT", "RNN", "RAM", "ROM"],
+    answer: 0,
+    score: 5,
+    explanation: "GPT(生成式预训练模型)是最新主流AI对话模型。"
+  },
+  {
+    question: "15. 专业导论课主要介绍？",
+    options: ["本专业方向", "恋爱技巧", "宇航飞船", "考研方法"],
+    answer: 0,
+    score: 5,
+    explanation: "专业导论主要介绍所学专业的发展、前景和基础内容。"
+  },
+  {
+    question: "16. “Hello World” 通常用于？",
+    options: ["初学编程输出", "加密", "存储图片", "检测硬件"],
+    answer: 0,
+    score: 5,
+    explanation: "Hello World 是程序员学习新语言的第一行输出代码。"
+  },
+  {
+    question: "17. Node.js最常运行在？",
+    options: ["服务器", "浏览器", "冰箱", "电梯"],
+    answer: 0,
+    score: 5,
+    explanation: "Node.js 常用于服务器端，编写后端JavaScript程序。"
+  },
+  {
+    question: "18. Github Pages 可以做什么？",
+    options: ["个人网站", "订餐", "定位导航", "叫出租车"],
+    answer: 0,
+    score: 5,
+    explanation: "GitHub Pages 可托管静态网页，常用于搭建个人主页。"
+  },
+  {
+    question: "19. 下面哪项是集成电路？",
+    options: ["IC", "CD", "CCTV", "PDF"],
+    answer: 0,
+    score: 5,
+    explanation: "IC(Integrated Circuit)即集成电路。"
+  },
+  {
+    question: "20. 二极管符号通常像？",
+    options: ["箭头", "圆圈", "波浪线", "三角"],
+    answer: 0,
+    score: 5,
+    explanation: "二极管符号是箭头带一横线，表示电流方向。"
+  }
 ];
 
-function createQuiz() {
-    let quizContainer = document.getElementById('quizForm');
-    quizContainer.innerHTML = '';
-    quizQuestions.forEach((q, idx) => {
-        // 构建每道题目和选项
-        let html = `<div class="question">${q.question}</div>
-                    <div class="options">`;
-        q.options.forEach((opt, i) => {
-            html += `
-            <label>
-                <input type="radio" name="q${idx}" value="${i}">
-                <span>${opt}</span>
-            </label>`;
-        });
-        html += '</div>';
-        quizContainer.innerHTML += html;
-    });
-    quizContainer.innerHTML += `<button type="submit" class="btn">提交答案</button>`;
-}
-createQuiz();
+let current = 0, score = 0, total = quizData.reduce((sum, q) => sum + q.score, 0);
+const quizBox = document.getElementById('quiz');
+const btnSubmit = document.getElementById('submit-btn');
+const btnNext = document.getElementById('next-btn');
+const scoreArea = document.getElementById('score-area');
+const resultDetail = document.getElementById('result-detail');
 
-document.getElementById('quizForm').onsubmit = function(e){
-    e.preventDefault();
-    let total = 0;
-    let unanswered = 0;
-    quizQuestions.forEach((q, idx) => {
-        let radios = document.getElementsByName('q' + idx);
-        let selected = -1;
-        for(let i=0; i<radios.length; i++) {
-            if(radios[i].checked) selected = i;
-        }
-        if(selected === -1) unanswered++;
-        else if(selected === q.answer) total += 10;
-    });
-    if(unanswered > 0){
-        document.getElementById('score').innerHTML = `<span style="color:#f39c12;">还有${unanswered}题未作答，请全部作答后再提交！</span>`;
-        return;
-    }
-    document.getElementById('score').innerHTML = `你的得分：<span style="color:#38bdf8">${total}</span> / 100`;
-    document.querySelectorAll('.btn[type=submit]')[0].style.display="none";
-    document.getElementById('restart-btn').style.display = '';
+function showQuestion() {
+  const q = quizData[current];
+  quizBox.innerHTML = `<div class="question">${q.question}</div>
+    <div class="options">
+      ${q.options.map((op, idx) =>
+        `<label>
+          <input type="radio" name="option" value="${idx}">
+          ${op}
+        </label>`).join('')}
+    </div>`;
+  resultDetail.textContent = "";
+  scoreArea.innerHTML = `当前得分：<b>${score}</b> / ${total}`;
+  btnSubmit.style.display = "inline-block";
+  btnNext.style.display = "none";
+}
+showQuestion();
+
+btnSubmit.onclick = function() {
+  const options = document.getElementsByName('option');
+  let val = -1;
+  options.forEach((op) => { if (op.checked) val = Number(op.value); });
+  if (val < 0) { resultDetail.textContent = "请选择一个答案"; return; }
+  const q = quizData[current];
+  let correct = (val === q.answer);
+  if (correct) score += q.score;
+  resultDetail.innerHTML =
+    (correct
+      ? `✅ 回答正确！本题得分：<b>${q.score}</b><br>`
+      : `❌ 错误，正确答案是：${q.options[q.answer]}。本题得分：<b>0</b><br>`)
+    + `<span style="color:#ffd463;">解析：${q.explanation}</span>`;
+  btnSubmit.style.display = "none";
+  btnNext.style.display = "inline-block";
+  scoreArea.innerHTML = `当前得分：<b>${score}</b> / ${total}`;
 };
 
-function restartQuiz(){
-    createQuiz();
-    document.getElementById('score').innerHTML = '';
-    document.getElementById('restart-btn').style.display = 'none';
-}
+btnNext.onclick = function() {
+  current++;
+  if (current < quizData.length) {
+    showQuestion();
+  } else {
+    quizBox.innerHTML = "";
+    btnSubmit.style.display = "none";
+    btnNext.style.display = "none";
+    scoreArea.innerHTML = `🎉 你答题完毕！总得分：<b>${score}/${total}</b>`;
+    resultDetail.innerHTML = score >= total * 0.8
+      ? "很棒！你知识储备丰富~"
+      : (score >= total * 0.5 ? "还不错，再接再厉！" : "加油，基础还需打牢哦~");
+  }
+};
 </script>
+
 </body>
 </html>
