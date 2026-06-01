@@ -64,10 +64,13 @@
         }
         .tags{
             margin-top: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
         }
         .tag {
             display: inline-block;
-            margin: 8px 6px;
             padding: 10px 28px;
             border: 1.5px solid #39fdfd;
             border-radius: 25px;
@@ -79,13 +82,13 @@
             text-decoration: none;
             transition: all 0.3s;
             position: relative;
+            white-space: nowrap;
         }
         .tag:hover {
             background: linear-gradient(90deg, #64e3ff, #65a7ff 90%);
             color: #161e33;
             box-shadow: 0 0 30px #0ea5e9cc, 0 0 44px #38bdf899;
             transform: translateY(-4px) scale(1.04) rotate(-1deg);
-            letter-spacing: 3px;
             text-decoration: none;
         }
         .footer{
@@ -113,7 +116,7 @@
             <p>电路 | AI | 编程 | 创意实践</p>
             <div class="tags">
                 <a class="tag" href="quiz.html">趣味测试</a>
-                <a class="tag" href="https://wxurl.cn/UOT" target="_blank">俄罗斯���块</a>
+                <a class="tag" href="https://wxurl.cn/UOT" target="_blank">俄罗斯方块</a>
                 <a class="tag" href="https://wxurl.cn/PME" target="_blank">小空调</a>
                 <a class="tag" href="https://wxurl.cn/36C" target="_blank">小电视</a>
                 <a class="tag" href="https://fan.elpsy.cn/" target="_blank">小风扇</a>
